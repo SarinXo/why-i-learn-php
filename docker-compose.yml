@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  php-apache-environment:
+    container_name: php-apache3
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    depends_on:
+      - mySQL_database
+    volumes:
+      - ./web:/var/www/html/
+    ports:
+      - "8004:80"
+
+  mySQL_database:
+    container_name: mySQL_database
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: MYSQL_DATABASE
+      MYSQL_USER: MYSQL_USER
+      MYSQL_PASSWORD: MYSQL_PASSWORD
+    ports:
+      - "9907:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8084:80'
+    restart: always
+    environment:
+      PMA_HOST: mySQL_database
+      UPLOAD_LIMIT: 300M
+    depends_on:
+      - mySQL_database
